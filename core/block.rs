@@ -1,34 +1,34 @@
-
-use sha2::{Sha256, Digest};
 use serde::{Serialize, Deserialize};
+use sha2::{Sha256, Digest};
+use chrono::Utc;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Block {
     pub index: u64,
-    pub timestamp: u128,
-    pub previous_hash: String,
+    pub timestamp: i64,
     pub data: String,
+    pub prev_hash: String,
     pub hash: String,
 }
 
 impl Block {
-    pub fn new(index: u64, timestamp: u128, previous_hash: String, data: String) -> Self {
-        let mut block = Block {
+    pub fn new(index: u64, data: String, prev_hash: String) -> Self {
+        let timestamp = Utc::now().timestamp();
+        let mut hasher = Sha256::new();
+        hasher.update(format!("{}{}{}{}", index, timestamp, &data, &prev_hash));
+        let result = hasher.finalize();
+        let hash = format!("{:x}", result);
+
+        Block {
             index,
             timestamp,
-            previous_hash,
             data,
-            hash: String::new(),
-        };
-        block.hash = block.calculate_hash();
-        block
+            prev_hash,
+            hash,
+        }
     }
 
-    pub fn calculate_hash(&self) -> String {
-        let record = format!("{}{}{}{}", self.index, self.timestamp, self.previous_hash, self.data);
-        let mut hasher = Sha256::new();
-        hasher.update(record);
-        let result = hasher.finalize();
-        hex::encode(result)
+    pub fn genesis() -> Self {
+        Block::new(0, "Genesis Block".to_string(), "0".to_string())
     }
 }
