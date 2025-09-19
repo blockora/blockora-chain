@@ -1,5 +1,1 @@
-pub mod cli;
-pub mod contracts;
-pub mod core;
-pub mod network;
-pub mod wallet;
+// empty for now; CLI launcher is in cli/main.rs
