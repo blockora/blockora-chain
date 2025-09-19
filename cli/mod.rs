@@ -1,1 +1,2 @@
-// empty for now; CLI launcher is in cli/main.rs
+// cli/mod.rs
+// You can add CLI-related modules later, for now keep it empty or minimal
