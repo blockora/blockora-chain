@@ -36,10 +36,6 @@ Our mission is to bring **Web3 adoption to the next billion users** by focusing 
 
 ## 🏗️ Architecture
 
-<p align="center">
-  <img src="images/consensus_flowchart.png" alt="Consensus Architecture" width="700"/>
-</p>
-
 The Blockora architecture is modular and future-proof:
 
 - **Core Layer** – Consensus engine, transaction pool, block validation  
