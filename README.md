@@ -1,15 +1,29 @@
-# Blockora Blockchain
+# 🚀 Blockora Chain
 
-🚀 **Blockora** is a next-generation blockchain protocol designed for scalability, security, and decentralization.  
-This repository contains the **core blockchain implementation**, including:
+![Build](https://github.com/blockora/blockora-chain/actions/workflows/main.yml/badge.svg)
 
-- 🧱 **Core Modules**: Consensus (PoC), Networking, Wallet, Smart Contracts
-- 🔗 **CLI Interface**: Run a node, send transactions, check rewards
-- 🧪 **Tests**: Unit & integration tests for reliability
-- 📄 **Docs**: Technical design and roadmap
+Blockora Chain is a next-generation **Rust-based blockchain** designed for scalability, security, and developer-friendliness.  
+This repository contains the **core codebase** including consensus, networking, wallet, and transaction pool.
 
-## 📦 Installation
+---
+
+## 📖 Whitepaper
+📄 [Read the Blockora Whitepaper](https://blockora.github.io/blockora-whitepaper/)
+
+---
+
+## ✨ Features
+- ⚡ **Consensus Engine** – Secure & fast block finalization
+- 🌐 **P2P Networking** – Peer discovery & message propagation
+- 🪙 **Wallet Module** – Keypair generation & signing
+- 📦 **Transaction Pool** – Efficient mempool management
+- 🧪 **Unit Tests** – Core components covered
+
+---
+
+## 🛠️ Getting Started
+
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/blockora/blockora-chain.git
 cd blockora-chain
-cargo build
