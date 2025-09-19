@@ -1,6 +1,7 @@
 use rand::rngs::OsRng;
-use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signer};
+use ed25519_dalek::{Keypair, PublicKey, Signer};
 use sha2::{Sha256, Digest};
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone)]
 pub struct Wallet {
@@ -11,7 +12,7 @@ pub struct Wallet {
 impl Wallet {
     pub fn new() -> Self {
         let mut csprng = OsRng{};
-        let keypair = Keypair::generate(&mut csprng);
+        let keypair: Keypair = Keypair::generate(&mut csprng);
         let address = Self::public_key_to_address(&keypair.public);
         Wallet { keypair, address }
     }
@@ -20,7 +21,7 @@ impl Wallet {
         let mut hasher = Sha256::new();
         hasher.update(pubkey.as_bytes());
         let result = hasher.finalize();
-        hex::encode(&result[..20]) // short address (first 20 bytes)
+        hex::encode(&result[..20])
     }
 
     pub fn sign_message(&self, message: &[u8]) -> Vec<u8> {
@@ -28,7 +29,7 @@ impl Wallet {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Transaction {
     pub from: String,
     pub to: String,
