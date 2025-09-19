@@ -21,10 +21,11 @@ fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512];
     loop {
         match stream.read(&mut buffer) {
-            Ok(0) => break, // connection closed
-            Ok(_) => {
-                println!("📩 Received: {:?}", String::from_utf8_lossy(&buffer));
-                stream.write(b"ACK").unwrap();
+            Ok(0) => break,
+            Ok(n) => {
+                let text = String::from_utf8_lossy(&buffer[..n]).to_string();
+                println!("📩 Received: {}", text);
+                let _ = stream.write(b"ACK");
             }
             Err(_) => break,
         }
