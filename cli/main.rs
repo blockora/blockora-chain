@@ -1,12 +1,17 @@
-use blockora_chain::core::block::Block;
+use blockora_chain::wallet::wallet::{Wallet, Transaction};
 use blockora_chain::network::p2p;
 
 fn main() {
     println!("🚀 Blockora CLI Started!");
 
-    // Start Genesis Block
-    let genesis = Block::genesis();
-    println!("✅ Genesis Block Created: {:?}", genesis);
+    // Create wallet
+    let wallet = Wallet::new();
+    println!("💳 Wallet Created!");
+    println!("🔑 Address: {}", wallet.address);
+
+    // Create test transaction
+    let tx = Transaction::new(&wallet, "receiver123".to_string(), 50);
+    println!("✅ Transaction Created: {:?}", tx);
 
     // Start P2P Network
     println!("🌐 Starting P2P Node...");
