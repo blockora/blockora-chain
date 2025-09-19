@@ -1,31 +1,34 @@
-use rand::rngs::OsRng;
-use ed25519_dalek::{Keypair, PublicKey, Signer};
+use rand::RngCore;
 use sha2::{Sha256, Digest};
 use serde::{Serialize, Deserialize};
+use hex;
 
+/// Simple prototype wallet (educational). Uses a random 32-byte private key stored in memory.
+/// Address = first 20 bytes of SHA256(public/private), signature = SHA256(private_key || message)
 #[derive(Debug, Clone)]
 pub struct Wallet {
-    pub keypair: Keypair,
+    pub private_key: Vec<u8>,
     pub address: String,
 }
 
 impl Wallet {
     pub fn new() -> Self {
-        let mut csprng = OsRng{};
-        let keypair: Keypair = Keypair::generate(&mut csprng);
-        let address = Self::public_key_to_address(&keypair.public);
-        Wallet { keypair, address }
-    }
-
-    fn public_key_to_address(pubkey: &PublicKey) -> String {
+        let mut priv_key = vec![0u8; 32];
+        rand::rngs::OsRng.fill_bytes(&mut priv_key);
         let mut hasher = Sha256::new();
-        hasher.update(pubkey.as_bytes());
-        let result = hasher.finalize();
-        hex::encode(&result[..20])
+        hasher.update(&priv_key);
+        let digest = hasher.finalize();
+        let address = hex::encode(&digest[..20]); // short 20-byte hex address
+        Wallet { private_key: priv_key, address }
     }
 
+    /// Sign message (prototype): SHA256(private_key || message)
     pub fn sign_message(&self, message: &[u8]) -> Vec<u8> {
-        self.keypair.sign(message).to_bytes().to_vec()
+        let mut hasher = Sha256::new();
+        hasher.update(&self.private_key);
+        hasher.update(message);
+        let sig = hasher.finalize();
+        sig.to_vec()
     }
 }
 
