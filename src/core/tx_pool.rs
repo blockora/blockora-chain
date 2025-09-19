@@ -15,6 +15,7 @@ impl TxPool {
         self.pool.push(tx);
     }
 
+    /// Pop all transactions and return them; pool becomes empty
     pub fn take_all(&mut self) -> Vec<Transaction> {
         let txs = self.pool.clone();
         self.pool.clear();
