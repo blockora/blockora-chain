@@ -1,52 +1,43 @@
 use crate::core::block::Block;
 
-/// Simple in-memory blockchain
-#[derive(Debug, Clone)]
 pub struct Blockchain {
     pub chain: Vec<Block>,
 }
 
 impl Blockchain {
-    /// Create a new blockchain with genesis block
+    /// Create a new blockchain with a genesis block
     pub fn new() -> Self {
-        Self { chain: vec![Block::genesis()] }
+        let mut blockchain = Blockchain { chain: vec![] };
+        blockchain.add_block("Genesis Block".to_string());
+        blockchain
     }
 
-    /// Return last block's hash
-    pub fn last_hash(&self) -> String {
-        self.chain.last().unwrap().hash.clone()
-    }
-
-    /// Add a new block with provided data (data can be JSON of transactions)
-    pub fn add_block(&mut self, data: String) -> &Block {
-        let index = self.chain.len() as u64;
-        let prev_hash = self.last_hash();
-        let block = Block::new(index, data, prev_hash);
-        self.chain.push(block);
+    /// Get the latest block
+    pub fn latest_block(&self) -> &Block {
         self.chain.last().unwrap()
     }
 
-    /// Basic chain validation: check prev_hash linkage and recalculated hash
+    /// Add a block to the chain
+    pub fn add_block(&mut self, data: String) {
+        let previous_hash = if self.chain.is_empty() {
+            String::from("0")
+        } else {
+            self.latest_block().hash.clone()
+        };
+        let new_block = Block::new(self.chain.len() as u64, previous_hash, data, 0);
+        self.chain.push(new_block);
+    }
+
+    /// Validate entire chain
     pub fn is_valid(&self) -> bool {
         for i in 1..self.chain.len() {
             let current = &self.chain[i];
-            let prev = &self.chain[i - 1];
+            let previous = &self.chain[i - 1];
 
-            if current.prev_hash != prev.hash {
+            if !current.is_valid() {
                 return false;
             }
-
-            // Recalculate hash and compare
-            let recalculated = {
-                use sha2::{Sha256, Digest};
-                let record = format!("{}{}{}{}", current.index, current.timestamp, current.data, current.prev_hash);
-                let mut hasher = Sha256::new();
-                hasher.update(record);
-                let result = hasher.finalize();
-                format!("{:x}", result)
-            };
-
-            if recalculated != current.hash {
+            if current.previous_hash != previous.hash {
                 return false;
             }
         }
