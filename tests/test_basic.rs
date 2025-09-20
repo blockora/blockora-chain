@@ -10,3 +10,8 @@ fn test_genesis_and_add_block() {
     assert_eq!(bc.chain.len(), 2);
     assert!(bc.is_valid());
 }
+
+#[test]
+fn test_basic() {
+    assert_eq!(2 + 2, 4);
+}
