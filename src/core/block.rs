@@ -2,33 +2,45 @@ use serde::{Serialize, Deserialize};
 use sha2::{Sha256, Digest};
 use chrono::Utc;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+/// A single block in the blockchain
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Block {
     pub index: u64,
     pub timestamp: i64,
+    pub previous_hash: String,
     pub data: String,
-    pub prev_hash: String,
+    pub nonce: u64,
     pub hash: String,
 }
 
 impl Block {
-    pub fn new(index: u64, data: String, prev_hash: String) -> Self {
+    /// Creates a new block and calculates its hash
+    pub fn new(index: u64, previous_hash: String, data: String, nonce: u64) -> Self {
         let timestamp = Utc::now().timestamp();
-        let mut hasher = Sha256::new();
-        hasher.update(format!("{}{}{}{}", index, timestamp, &data, &prev_hash));
-        let result = hasher.finalize();
-        let hash = format!("{:x}", result);
-
-        Block {
+        let mut block = Block {
             index,
             timestamp,
+            previous_hash,
             data,
-            prev_hash,
-            hash,
-        }
+            nonce,
+            hash: String::new(),
+        };
+        block.hash = block.calculate_hash();
+        block
     }
 
-    pub fn genesis() -> Self {
-        Block::new(0, "Genesis Block".to_string(), "0".to_string())
+    /// Hash calculation using SHA256
+    pub fn calculate_hash(&self) -> String {
+        let record = format!("{}{}{}{}{}", 
+            self.index, self.timestamp, self.previous_hash, self.data, self.nonce
+        );
+        let mut hasher = Sha256::new();
+        hasher.update(record.as_bytes());
+        format!("{:x}", hasher.finalize())
+    }
+
+    /// Verify block hash matches its data
+    pub fn is_valid(&self) -> bool {
+        self.hash == self.calculate_hash()
     }
 }
