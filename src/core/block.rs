@@ -2,7 +2,6 @@ use serde::{Serialize, Deserialize};
 use sha2::{Sha256, Digest};
 use chrono::Utc;
 
-/// A single block in the blockchain
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Block {
     pub index: u64,
@@ -14,7 +13,6 @@ pub struct Block {
 }
 
 impl Block {
-    /// Creates a new block and calculates its hash
     pub fn new(index: u64, previous_hash: String, data: String, nonce: u64) -> Self {
         let timestamp = Utc::now().timestamp();
         let mut block = Block {
@@ -29,9 +27,9 @@ impl Block {
         block
     }
 
-    /// Hash calculation using SHA256
     pub fn calculate_hash(&self) -> String {
-        let record = format!("{}{}{}{}{}", 
+        let record = format!(
+            "{}{}{}{}{}",
             self.index, self.timestamp, self.previous_hash, self.data, self.nonce
         );
         let mut hasher = Sha256::new();
@@ -39,7 +37,6 @@ impl Block {
         format!("{:x}", hasher.finalize())
     }
 
-    /// Verify block hash matches its data
     pub fn is_valid(&self) -> bool {
         self.hash == self.calculate_hash()
     }
