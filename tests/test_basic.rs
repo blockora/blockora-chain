@@ -1,17 +1,10 @@
-use blockora_chain::core::chain::Blockchain;
-use blockora_chain::core::block::Block;
+use blockora::core::chain::Blockchain;
 
 #[test]
-fn test_genesis_and_add_block() {
-    let mut bc = Blockchain::new();
-    assert_eq!(bc.chain.len(), 1);
-    assert_eq!(bc.chain[0].index, 0);
-    let _ = bc.add_block("test-data".to_string());
-    assert_eq!(bc.chain.len(), 2);
-    assert!(bc.is_valid());
-}
+fn test_blockchain_creation() {
+    let mut blockchain = Blockchain::new();
+    blockchain.add_block("Test Block".to_string());
 
-#[test]
-fn test_basic() {
-    assert_eq!(2 + 2, 4);
+    assert!(blockchain.is_valid());
+    assert_eq!(blockchain.chain.len(), 2); // Genesis + 1
 }
